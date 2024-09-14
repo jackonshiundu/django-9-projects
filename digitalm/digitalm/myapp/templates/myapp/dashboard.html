@@ -1,0 +1,67 @@
+{% extends "myapp/base.html" %}
+  <body>
+    {% block body %}
+<div class="flex m-5 justify-between">
+    <div class='ml-20 mt-20 font-bold text-xl'>
+        My Products
+    </div>
+    <div class='ml-10 mt-20'>
+        <a class='bg-green-500 text-white mr-8 px-2 py-4' href="{% url 'createproduct'  %}">New Product</a>
+    </div>
+</div>
+<div class="product-container p-10 m-5">
+
+    {% for product in products %}
+    <div class='flex shadow-lg m-5 p-2 justify-between'>
+        <div class='flex w-1/4 '>
+            <img class='h-20' src="https://totalcomp.com/images/no-image.jpeg" alt="">
+        <div class='relative group'>
+            <a href="{% url 'editproduct' product.id %}">
+            <div class='opacity-0 group-hover:opacity-100 duration-300 absolute inset-x-0 bottom-0 p-8 justify-center item-end bg-white font-semibold'>
+                Edit Product
+            </div>
+            
+            <div class='ml-5 '> <div class='font-bold text-sm'>
+  {{product.name}}
+
+            </div>
+            <div class='text-sm text-green-500'>Ksh.
+    {{product.price}}
+            </div></div>
+           </a>
+           
+        </div>
+        </div>
+  <div>
+    <div class='text-2xl text-grreen-500'>
+        Ksh.{{product.total_sales_amount}}
+    </div>
+    <div class='text-xl'>
+        Total Earnings
+    </div>
+  </div>
+  <div>
+    <div class='text-2xl '>
+       {{product.total_sales}}
+    </div>
+    <div class='text-xl'>
+        Total Orders
+    </div>
+  </div>
+  <div class='pr-5'>
+    <div class='text-2xl '>
+        4.8
+    </div>
+    <div class='text-xl'>
+        Ratings
+    </div>
+  </div>
+    </div>
+
+    
+    {% endfor %}
+</div>
+    {% endblock  %}
+  </body>
+</html>
+

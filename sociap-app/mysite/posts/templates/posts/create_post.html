@@ -1,0 +1,47 @@
+{% extends "users/base.html" %} {% block body %}
+<h2 class="p-10 mt-10 font-bold text-xl">Create a New Post 🎉✨s</h2>
+<div class="p-5">
+  <form
+    method="post"
+    class="bg-white shadow-md m-10 w-2/5 rounded-md px-8 pt-6 pb-8 mb-4"
+    enctype="multipart/form-data"
+  >
+    {% csrf_token %}
+    <div class="mb-2">
+      <label for="" class="block text-gray-700 text-sm font-bold mb-2"
+        >Title</label
+      >
+      <div
+        class="shadow px-3 py-2 mr-10 text-gray-700 appearance-none border rounded"
+      >
+        {{form.title}}
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="" class="block text-gray-700 text-sm font-bold mb-2"
+        >Image</label
+      >
+      <div
+        class="shadow px-3 py-2 mr-10 text-gray-700 appearance-none border rounded"
+      >
+        {{form.image}}
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="" class="block text-gray-700 text-sm font-bold mb-2"
+        >Caption</label
+      >
+      <div
+        class="shadow px-3 py-2 mr-10 text-gray-700 appearance-none border rounded"
+      >
+        {{form.caption}}
+      </div>
+    </div>
+
+    <button type="submit" class="text-white px-5 py-2 mt-3 bg-green-600">
+      Create Post
+    </button>
+  </form>
+</div>
+
+{% endblock body %}

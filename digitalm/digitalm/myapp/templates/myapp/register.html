@@ -1,0 +1,46 @@
+{% extends "myapp/base.html" %}
+<head></head>
+{% block body %}
+<div class="flex flex-col justify-center items-center min-h-screen">
+  <h1>🔏 Register</h1>
+  <form method="post" class="shadow-lg p-10">
+    {% csrf_token %}
+    <div class="mb-2">
+      <label for="">Username</label>
+      <div class="border border-rounded py-2 px-2 mr-10">
+        {{user_form.username}}
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="">Email</label>
+      <div class="border border-rounded py-2 px-2 mr-10">
+        {{user_form.email}}
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="">First Name</label>
+      <div class="border border-rounded py-2 px-2 mr-10">
+        {{user_form.first_name}}
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="">Password</label>
+      <div class="border border-rounded py-2 px-2 mr-10">
+        {{user_form.password}}
+      </div>
+    </div>
+    <div class="mb-2">
+      <label for="">Confirm Password</label>
+      <div class="border border-rounded py-2 px-2 mr-10">
+        {{user_form.password2}}
+      </div>
+    </div>
+
+    <button class="bg-green-500 text-white p-2" type="submit">
+      Register User
+    </button>
+  </form>
+  <a href="{% url 'login' %}" class="text-indigo-500">Click here </a> To Login
+</div>
+
+{% endblock %}

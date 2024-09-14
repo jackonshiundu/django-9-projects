@@ -1,0 +1,21 @@
+{% extends "myapp/base.html" %}
+<head></head>
+{% block body %}
+<div class="w-1/2 mt-10 mx-auto">
+
+  <form
+    class="shadow-lg p-10 flex flex-col gap-2"
+    action="{% url 'delete' product.id %}"
+    method="post"
+  >
+    {% csrf_token %}
+    <h3>Are you sure You want to delete the Product?</h3>
+
+      <button class="bg-green-500 text-white px-4 py-2" type="submit">
+        Delete
+      </button>
+      <a class="bg-red-500 text-white px-4 py-2" href="{% url 'index' %}">No</a>
+    </div>
+  </form>
+</div>
+{% endblock body %}

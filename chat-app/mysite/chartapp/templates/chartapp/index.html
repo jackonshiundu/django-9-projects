@@ -1,0 +1,7 @@
+{% extends "chartapp/base.html" %} {% block body %}
+<h1>Hello</h1>
+{% for chartroom in chartooms %}
+
+<a href="{% url 'chartroom' chartroom.slug %}">{{chartroom.name}}</a>
+
+{% endfor %} {% endblock body %}

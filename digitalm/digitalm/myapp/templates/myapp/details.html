@@ -1,0 +1,57 @@
+{% extends "myapp/base.html" %} {% block body %}
+<div class="flex p-10 gap-4">
+  <div>
+    <img src="https://totalcomp.com/images/no-image.jpeg" alt="" />
+  </div>
+  <div>
+    <div class="text-4xl mb-4">{{product.name}}</div>
+    <div class="mb-4">{{product.description}}</div>
+    <div class="mb-4 text-green-700 text-4xlfont-bold">
+      Ksh.{{product.price}}
+    </div>
+    <div class="">
+      <button
+        id="checkout-btn"
+        class="bg-green-500 rounded-sm text-whit px-4 py-4"
+      >
+        Buy Now
+      </button>
+    </div>
+    <div id="myemail" hidden>{{request.user.email}}</div>
+  </div>
+</div>
+<script src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+  var stripe = Stripe("{{ stripe_publishable_key }}");
+  var checkoutButton = document.getElementById("checkout-btn");
+  checkoutButton.addEventListener("click", function () {
+    var email = document.getElementById("myemail").innerText;
+    if (email.length == 0) {
+      alert("Please enter your email");
+      return;
+    }
+    fetch("{% url 'api_checkout_session' id=product.id  %}", {
+      method: "POST",
+      body: JSON.stringify({ email: email }),
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (session) {
+        if (session.sessionId) {
+          return stripe.redirectToCheckout({ sessionId: session.sessionId });
+        } else {
+          console.error("Session ID is missing in the response.");
+        }
+      })
+      .then(function (result) {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  });
+</script>
+{% endblock body %}

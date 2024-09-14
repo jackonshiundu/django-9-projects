@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <nav class="shadow-lg">
+      <div
+        class="flex flex-wrap justify-between ml-5 items-center mx-auto px-4 py-2"
+      >
+        <a href="{% url 'index' %}" class="flex items-center">
+          <img
+            class="h-10 mr-3"
+            src="https://cdn4.iconfinder.com/data/icons/business-1221/24/Cart-512.png"
+            alt="logo"
+          />
+          <span class="self-center">Digital Market Place</span>
+        </a>
+        <div class="flex items-center">
+          <a
+            href="{% url 'dashboard' %}"
+            class="mr-6 text-sm font-medium text-gray-500"
+            >Dashboard</a
+          >
+          <a
+            href="{% url 'sales' %}"
+            class="mr-6 text-sm font-medium text-gray-500"
+            >sales</a
+          >
+          <a href="" class="mr-6 text-sm font-medium text-gray-500">Orders</a>
+          <a
+            href="{% url 'createproduct' %}"
+            class="mr-6 text-sm font-medium text-gray-500"
+            >Create Products</a
+          >
+          <a
+            href="{% url 'purchases' %}"
+            class="mr-6 text-sm font-medium text-gray-500"
+            >My Purchases</a
+          >
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button
+              class="mr-6 text-sm font-medium text-gray-500"
+              type="submit"
+            >
+              Logout
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    {% block body %}{% endblock body %}
+  </body>
+</html>

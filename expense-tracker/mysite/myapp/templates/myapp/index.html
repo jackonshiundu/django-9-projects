@@ -1,0 +1,227 @@
+{% extends "myapp/base.html" %} {% load static %} {% load humanize %}
+
+<head></head>
+{% block body %}
+<h1 class="text-red-400 text-2xl ml-10 mt-10">This is the index page 🧨</h1>
+<form
+  action=""
+  method="post"
+  class="shadow-lg justify-center items-center flex gap-5 p-5 rounded-lg m-10"
+>
+  {% csrf_token %}
+  <div class="form-container">
+    <div class="mb-3">
+      <label for=""> Expense Name </label>
+    </div>
+    <div class="border">{{expense_form.name}}</div>
+  </div>
+  <div class="form-container">
+    <div class="mb-3">
+      <label for=""> Expense Amount </label>
+    </div>
+    <div class="border">{{expense_form.amount |intcomma}}</div>
+  </div>
+  <div class="form-container">
+    <div class="mb-3">
+      <label for=""> Expense Category </label>
+    </div>
+    <div class="border">{{expense_form.category}}</div>
+  </div>
+  <div>
+    <button
+      type="submit"
+      class="bg-yellow-500 py-1 font-bold mt-8 px-6 shadow-md"
+    >
+      Add
+    </button>
+  </div>
+</form>
+<div class="">
+  <div class="shadow-lg m-10 rounded-lg">
+    <h1 class="mb-4 p-5">Expenses 💲</h1>
+    <div class="expense-header px-20 pt-5 flex flex-wrap space-x-40">
+      <span>Name</span>
+      <span>Amount</span>
+      <span>Category</span>
+      <span>Date</span>
+      <span>Edit</span>
+      <span>Delete</span>
+    </div>
+    <hr class="m-10" />
+    {% for expense in expenses %}
+    <div class="expense-row flex-wrap py-5">
+      <span>{{expense.name}}</span>
+      <span> Ksh.{{expense.amount}} </span>
+      <span> {{expense.category}} </span>
+      <span> {{expense.date}} </span>
+      <span class="pl-24"
+        ><a href="{% url 'edit' expense.id %}"
+          ><img
+            src="{% static 'myapp/images/edit.png' %}"
+            class="h-5"
+            alt="delete"
+        /></a>
+      </span>
+      <span class="pl-24"
+        ><form action="{% url 'delete' expense.id %}" method="post">
+          {% csrf_token %}
+          <button name="delete" type="submit">
+            <img
+              class="h-5"
+              src="{% static 'myapp/images/delete.png' %}"
+              alt="delete"
+            />
+          </button></form
+      ></span>
+    </div>
+    {% endfor %}
+    <div class="py-5 font-bold">
+      Total:<span>Ksh.{{total_expenses.amount__sum |intcomma}}</span>
+    </div>
+  </div>
+</div>
+<div class="flex my-16">
+  <div class="w-1/3 shadow-lg ml-10 rounded-lg p-4 bg-orange-300">
+    <h1 class="">Last 365 Days</h1>
+    <h1 class="font-bold text-green-500">
+      {{yearly_sum.amount__sum |intcomma}}
+    </h1>
+  </div>
+  <div class="w-1/3 shadow-lg ml-10 rounded-lg p-4 bg-orange-300">
+    <h1>Last 30 Days</h1>
+    <h1 class="font-bold text-green-500">
+      {{monthly_sum.amount__sum |intcomma}}
+    </h1>
+  </div>
+  <div class="w-1/3 shadow-lg ml-10 rounded-lg p-4 bg-orange-300">
+    <h1>Last 7 Days</h1>
+    <h1 class="font-bold text-green-500">
+      {{weekly_sum.amount__sum |intcomma}}
+    </h1>
+  </div>
+</div>
+<div class="flex gap-2">
+  <div class="w-1/2 shadow-lg m-10=">
+    <div class="flex flex-wrap space-x-40 font-bold px-20 py-5">
+      <span>Past 30 Days Sum Expenses</span>
+      <hr />
+      <div id="30-day-table">
+        {% for daily_sum in daily_sums %}
+        <div class="flex flex-wrap px-20 py-5">
+          <span> {{daily_sum.date}} </span>
+        </div>
+        <div class="flex flex-wrap px-20 py-5">
+          <span class="text-green-500">Ksh {{daily_sum.sum |intcomma}}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="w-1/2 shadow-lg m-10=">
+    <div class="flex flex-wrap space-x-40 font-bold px-20 py-5">
+      <span>Categorical Expenses</span>
+      <hr />
+      <div id="cat-sum-table">
+        {% for category_sum in category_sums %}
+        <div class="flex flex-wrap px-20 py-5">
+          <span> {{category_sum.category}} </span>
+        </div>
+        <div class="flex flex-wrap px-20 py-5">
+          <span class="text-green-500">Ksh {{category_sum.sum |intcomma}}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="flex">
+  <div class="w-1/2 shadow-lg ml-10">
+    <h1>Expense Spread Across Category</h1>
+    <canvas id="myChart" class="m-10"></canvas>
+  </div>
+  <div class="w-1/2 shadow-lg ml-10">
+    <h1>Expense Spread Across 30 Days</h1>
+    <canvas id="myChart2" class="m-10"></canvas>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  //expense across diffrent CATEGORY
+  const categories = [];
+  const sumTotal = [];
+  const catSumDiv = document
+    .getElementById("cat-sum-table")
+    .getElementsByTagName("div");
+  for (i = 0; i < catSumDiv.length; i++) {
+    if (i % 2 == 1) {
+      sumTotal.push(
+        parseInt(catSumDiv[i].innerText.split(" ")[1].replace(/,/g, ""))
+      );
+    } else {
+      categories.push(catSumDiv[i].innerText);
+    }
+  }
+
+  const ctx = document.getElementById("myChart");
+
+  new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: categories,
+      datasets: [
+        {
+          label: "Total of ",
+          data: sumTotal,
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+  //expense across 30 DAYS
+  const thirdDates = [];
+  const thirdSums = [];
+  const thirdSumDiv = document
+    .getElementById("30-day-table")
+    .getElementsByTagName("div");
+
+  for (i = 0; i < thirdSumDiv.length; i++) {
+    if (i % 2 == 1) {
+      thirdSums.push(
+        parseInt(thirdSumDiv[i].innerText.split(" ")[1].replace(/,/g, ""))
+      );
+    } else {
+      thirdDates.push(thirdSumDiv[i].innerText);
+    }
+  }
+  const ctx2 = document.getElementById("myChart2");
+
+  new Chart(ctx2, {
+    type: "bar",
+    data: {
+      labels: thirdDates,
+      datasets: [
+        {
+          label: "Total of ",
+          data: thirdSums,
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+</script>
+
+{% endblock body %}
